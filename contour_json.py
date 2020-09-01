@@ -67,3 +67,20 @@ def compare_point(json_path, mx, my):
 		return selected
 
 
+def resize_bndbox(json_path, mx, my):
+	d = load_json(json_path)
+	selected = {}
+
+	selected['filename'] = d['filename']
+	selected['index'] = []
+
+	for region in d['regions']:
+		x = region['shape_attributes']['x']
+		y = region['shape_attributes']['y']
+		w = region['shape_attributes']['width']
+		h = region['shape_attributes']['height']
+
+		if (mx = x and my = y) or (mx = x+w and my = y+h):
+			pass
+
+
