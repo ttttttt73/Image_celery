@@ -24,16 +24,16 @@ ALLOWED_EXTENSIONS = {'bmp', 'tiff', 'tif', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 
 def make_celery(app):
-	celery = Celery('test_flask', broker=app.config['CELERY_BROKER_URL'])
-	celery.conf.update(app.config)
-	TaskBase = celery.Task
-	class ContextTask(TaskBase):
-		abstract = True
-		def __call__(self, *args, **kwargs):
-			with app.app_context():
-				return TaskBase.__call__(self, *args, **kwargs)
-	celery.Task = ContextTask
-	return celery
+    celery = Celery('test_flask', broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
 
 
 app = Flask(__name__,
@@ -41,8 +41,8 @@ app = Flask(__name__,
             template_folder = "./dist")
 
 app.config.update(
-	CELERY_BROKER_URL = 'redis://localhost:6379',
-	CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+    CELERY_BROKER_URL = 'redis://localhost:6379',
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 )
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 celery = make_celery(app)
@@ -53,33 +53,33 @@ app.secret_key = secret
 
 
 def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @celery.task()
 def imageUpload(filename):
-	with open((os.path.join(app.config['UPLOAD_FOLDER'], filename)), 'rb+') as data:
-		res = api.add(data)
-	r.set(res['Hash'], filename)
-	return res
+    with open((os.path.join(app.config['UPLOAD_FOLDER'], filename)), 'rb+') as data:
+        res = api.add(data)
+    r.set(res['Hash'], filename)
+    return res
 
 
 @celery.task()
 def get_ipfs(hash_val):
-	# url = 'http://localhost:8080/ipfs/'+ hash_val
-	# r = requests.get(url)
-	rfile = api.cat(hash_val)
-	# return r.text
-	# return rfile
-	# return render_template("image.html", **locals())
+    # url = 'http://localhost:8080/ipfs/'+ hash_val
+    # r = requests.get(url)
+    rfile = api.cat(hash_val)
+    # return r.text
+    # return rfile
+    # return render_template("image.html", **locals())
 	
 
 @celery.task()
 def getimage(hash_val):
-	path_bytes = r.get(hash_val)
-	path = path_bytes.decode('utf-8')
-	# path = os.path.join(app.config['UPLOAD_FOLDER'], hash_val)+'.jpg'
-	return path
+    path_bytes = r.get(hash_val)
+    path = path_bytes.decode('utf-8')
+    # path = os.path.join(app.config['UPLOAD_FOLDER'], hash_val)+'.jpg'
+    return path
 
 
 @celery.task()
@@ -264,7 +264,7 @@ def bndbox():
 
 @app.route('/vision')
 def vision():
-	temp = request.args.get('hash', '')
+    temp = request.args.get('hash', '')
     task = getimage.delay(temp)
     task_result = task.wait()
     pass
