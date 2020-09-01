@@ -264,7 +264,10 @@ def bndbox():
 
 @app.route('/vision')
 def vision():
-	pass
+	temp = request.args.get('hash', '')
+    task = getimage.delay(temp)
+    task_result = task.wait()
+    pass
 
 
 if __name__ == '__main__':
