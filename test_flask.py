@@ -261,14 +261,14 @@ def bndbox():
         print(sel_filepath)
         return jsonify(sel_filepath) 
 
-
+'''
 @app.route('/vision')
 def vision():
     temp = request.args.get('hash', '')
     task = getimage.delay(temp)
     task_result = task.wait()
     pass
-
+'''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8081)
