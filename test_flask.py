@@ -146,12 +146,12 @@ def find_contour(hash_val, d, e):
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
         cropped = img[y:y+h, x:x+w]
-        output_name = '_' + str(index) + '.jpg'
         h, w = cropped.shape[:2]
         area = w*h
         if 1600 < area < 90000:
             rect = cv2.rectangle(thresh_color, (x,y), (x+w,y+h), (0,255,0), 2)
             index = index + 1
+            output_name = '_' + str(index) + '.jpg'
             cv2.imwrite(os.path.join(output_folder, save_name+output_name), cropped)
             bndbox.append([index, x, y, w, h])
     result = '.jpg'
